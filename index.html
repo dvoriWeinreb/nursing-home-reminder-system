@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+      }
+      input, select, button {
+        margin: 5px 0;
+        padding: 8px;
+        width: 100%;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th, td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f0f0f0;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>הוספת תזכורת חדשה</h2>
+    <label>שם דייר:</label>
+    <input type="text" id="residentName">
+
+    <label>סוג התזכורת:</label>
+    <select id="reminderType">
+      <option value="תרופה">תרופה</option>
+      <option value="פעילות">פעילות</option>
+      <option value="אחר">אחר</option>
+    </select>
+
+    <label>תיאור:</label>
+    <input type="text" id="description">
+
+    <label>תאריך:</label>
+    <input type="date" id="date">
+
+    <label>שעה:</label>
+    <input type="time" id="time">
+
+    <button onclick="addReminder()">הוסף</button>
+
+    <h2>תזכורות קיימות</h2>
+    <table id="remindersTable">
+      <thead>
+        <tr>
+          <th>שם</th>
+          <th>סוג</th>
+          <th>תיאור</th>
+          <th>תאריך</th>
+          <th>שעה</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <script>
+      function addReminder() {
+        const data = {
+          residentName: document.getElementById('residentName').value,
+          reminderType: document.getElementById('reminderType').value,
+          description: document.getElementById('description').value,
+          date: document.getElementById('date').value,
+          time: document.getElementById('time').value,
+        };
+        google.script.run.withSuccessHandler(loadReminders).addReminder(data);
+      }
+
+      function loadReminders(reminders) {
+        const tbody = document.querySelector('#remindersTable tbody');
+        tbody.innerHTML = '';
+        reminders.forEach(r => {
+          const row = document.createElement('tr');
+          row.innerHTML = `<td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td>`;
+          tbody.appendChild(row);
+        });
+      }
+
+      window.onload = () => {
+        google.script.run.withSuccessHandler(loadReminders).getReminders();
+      };
+    </script>
+  </body>
+</html>
