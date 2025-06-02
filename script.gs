@@ -1,18 +1,14 @@
-function sendReminders() {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Reminders');
-  const data = sheet.getDataRange().getValues();
-  const now = new Date();
+function doGet() {
+  return HtmlService.createHtmlOutputFromFile('index');
+}
 
-  for (let i = 1; i < data.length; i++) {
-    const name = data[i][0];
-    const task = data[i][1];
-    const time = new Date(data[i][2]);
-    const sent = data[i][3];
+function addReminder(data) {
+  const sheet = SpreadsheetApp.openById('YOUR_SPREADSHEET_ID').getSheetByName('Reminders');
+  sheet.appendRow([data.residentName, data.reminderType, data.description, data.date, data.time]);
+  return getReminders();
+}
 
-    if (!sent && time <= now) {
-      // שלח תזכורת (לדוגמה: אימייל או לוג)
-      Logger.log(`Reminder for ${name}: ${task}`);
-      sheet.getRange(i + 1, 4).setValue(true); // סימון כתזכורת שנשלחה
-    }
-  }
+function getReminders() {
+  const sheet = SpreadsheetApp.openById('YOUR_SPREADSHEET_ID').getSheetByName('Reminders');
+  return sheet.getDataRange().getValues().slice(1); // בלי שורת כותרת
 }
